@@ -19,11 +19,9 @@ app.use(express.urlencoded({extended: true}));
 app.post('/create', async (req, res) => {
     try {
         console.log(req.body);
-        const id = req.body.email;
+        //const id = req.body.email;
         const userJson = {
-            email: req.body.email,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName
+            playlist: req.body.playlist,
         }
         const response = db.collection("users").add(userJson);
         res.send(response);
@@ -34,7 +32,7 @@ app.post('/create', async (req, res) => {
 //get all data
 app.get('/read', async(req,res) => {
     try {
-        const userRef = db.collection("todos");
+        const userRef = db.collection("users");
         const response = await userRef.get();
         let responseArr = [];
         response.forEach(doc => {
@@ -49,7 +47,7 @@ app.get('/read', async(req,res) => {
 app.get('/read/:id', async(req,res) => {
     try {
         //let id = req.params.id;
-        const userRef = db.collection("todos");
+        const userRef = db.collection("users");
                                     // where("nomor", "==" id)
         const response = await userRef.get();
         res.send(response.data());
@@ -64,7 +62,7 @@ app.post('/update', async(req,res) => {
         const id=req.body.id;
         const newContent = "Main dota2 5 jam"
         // yang dimasukin di jsonnya id documentnya
-        const userRef = await db.collection("todos").doc(id)
+        const userRef = await db.collection("users").doc(id)
         .update({
             content: newContent
         });
@@ -78,7 +76,7 @@ app.post('/update', async(req,res) => {
 app.delete('/delete/:id', async (req, res) => {
     try{
         //req.params.id itu id yg dimasukin diroutenya
-        const response = await db.collection("todos").doc(req.params.id).delete(); 
+        const response = await db.collection("users").doc(req.params.id).delete(); 
         res.send(response);
     } catch(error){
         res.send(error);    
