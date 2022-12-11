@@ -23,7 +23,7 @@ app.post('/create', async (req, res) => {
         const userJson = {
             playlist: req.body.playlist,
         }
-        const response = db.collection("users").add(userJson);
+        const response = db.collection("jus30").add(userJson);
         res.send(response);
     } catch(error){
         res.send(error);
@@ -32,7 +32,7 @@ app.post('/create', async (req, res) => {
 //get all data
 app.get('/read', async(req,res) => {
     try {
-        const userRef = db.collection("users");
+        const userRef = db.collection("jus30");
         const response = await userRef.get();
         let responseArr = [];
         response.forEach(doc => {
@@ -46,10 +46,9 @@ app.get('/read', async(req,res) => {
 //get data by param
 app.get('/read/:id', async(req,res) => {
     try {
-        //let id = req.params.id;
-        const userRef = db.collection("users");
-                                    // where("nomor", "==" id)
-        const response = await userRef.get();
+        let id = req.params.id;
+        const userRef = db.collection("jus30");
+        const response = await userRef.where("nomor", "==", id).get();
         res.send(response.data());
     } catch(error){
         res.send(error);
@@ -62,7 +61,7 @@ app.post('/update', async(req,res) => {
         const id=req.body.id;
         const newContent = "Main dota2 5 jam"
         // yang dimasukin di jsonnya id documentnya
-        const userRef = await db.collection("users").doc(id)
+        const userRef = await db.collection("jus30").doc(id)
         .update({
             content: newContent
         });
@@ -76,7 +75,7 @@ app.post('/update', async(req,res) => {
 app.delete('/delete/:id', async (req, res) => {
     try{
         //req.params.id itu id yg dimasukin diroutenya
-        const response = await db.collection("users").doc(req.params.id).delete(); 
+        const response = await db.collection("jus30").doc(req.params.id).delete(); 
         res.send(response);
     } catch(error){
         res.send(error);    
