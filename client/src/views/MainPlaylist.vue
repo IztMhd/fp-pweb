@@ -22,7 +22,7 @@
                     <form>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Title</label>
-                        <input type="text" class="form-control" id="recipient-name">
+                        <input type="text" class="form-control" id="recipient-name" v-model="namaPlaylist">
                     </div>
                     <div class="mb-3">
                         <label for="message-text" class="col-form-label">Surah</label>
@@ -30,9 +30,9 @@
                             <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></span>
                             <input type="text" class="form-control" placeholder="search ... " aria-label="Username" aria-describedby="basic-addon1">
                         </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">An-naba</label>
+                        <div class="form-check form-switch" v-for="surat in surats" :key="surat.id">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="namaSurat">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">{{surat.nama}}</label>
                         </div>
 
                     </div>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send message</button>
+                    <button type="button" class="btn btn-primary" @click="addPlaylist">Add</button>
                 </div>
                 </div>
             </div>
@@ -49,13 +49,14 @@
             <h6 class="border-bottom pb-2 mb-0 bold">All Playlist</h6>
             <div class="d-flex text-muted pt-3">
             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"/><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
-
-            <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                <div class="d-flex justify-content-between" v-for="playlist in playlists" :key="playlist.id">
-                <strong class="text-gray-dark" style="margin-top:7px">{{playlist.nama}}</strong>
+            
+            <!-- v-for="playlist in playlists" :key="playlist.id" -->
+            <div class="pb-3 mb-0 small lh-sm border-bottom w-100"> 
+                <div class="d-flex justify-content-between">
+                <strong class="text-gray-dark" style="margin-top:7px">MyPl</strong>
                 <div>
                     <router-link class="btn btn-primary" to="/playlist" >Open</router-link>
-                    <button class="btn btn-danger" style="margin-left:3px">Delete</button>
+                    <button class="btn btn-danger" style="margin-left:3px" @click="deletePlaylist(this.id)">Delete</button>
                 </div>
                 <!-- <router-link to="/" class="btn btn-primary">Buka</router-link> -->
                 </div>
@@ -75,15 +76,31 @@ export default {
   data(){
     return{
       playlists: null,
+      surats: null,
+      namaPlaylist: null,
+      namaSurat: null,
+      id: "li9AQ2uYf1DEQhopcc4Y"
     }
   },
-  async mounted(){
-    const pl = await fetch("http://localhost:8082/read")
-    const value = await pl.json()
-    console.log(value)
-    this.playlists = value
+  mounted(){
+    this.readAllSurat();
   },
   methods:{
+    async readAllSurat(){
+      const pl = await fetch("http://localhost:8082/read")
+      const value = await pl.json()
+      this.surats = value
+    },
+    addPlaylist(){
+      
+    },
+    async deletePlaylist(playlistId) {
+      const pl = await fetch("http://localhost:8082/delete/" + playlistId, {
+        method: 'DELETE',
+      }).then (res => res.json())
+      .then(res => console.log(res))
+      console.log(playlistId)
+    },
   
   }
 }

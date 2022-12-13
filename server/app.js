@@ -20,10 +20,14 @@ app.post('/create', async (req, res) => {
     try {
         console.log(req.body);
         //const id = req.body.email;
-        const userJson = {
-            playlist: req.body.playlist,
+        const playlist = {
+            nama: req.body.nama,
+            surat:{
+                namaSurat: req.body.surat.namaSurat,
+                nomor: req.body.surat.nomor
+            }
         }
-        const response = db.collection("jus30").add(userJson);
+        const response = db.collection("jus30").add(playlist);
         res.send(response);
     } catch(error){
         res.send(error);
@@ -49,7 +53,11 @@ app.get('/read/:id', async(req,res) => {
         let id = req.params.id;
         const userRef = db.collection("jus30");
         const response = await userRef.where("nomor", "==", id).get();
-        res.send(response.data());
+        let responseArr =[];
+        response.forEach(doc => {
+            responseArr.push(doc.data());
+        });
+        res.send(responseArr);
     } catch(error){
         res.send(error);
     }
