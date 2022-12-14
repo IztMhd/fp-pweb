@@ -43,42 +43,28 @@
         <div class="my-3 p-3 bg-body rounded shadow-sm">
             <router-link to="/"><i class="fa-solid fa-arrow-left"></i></router-link>
             <h6 class="border-bottom pb-2 mb-0 bold">All Surah</h6>
-            <div class="d-flex text-muted pt-3">
+              <div >
+                <div class="d-flex text-muted pt-3">
+                  <strong class="bd-placeholder-img flex-shrink-0 me-3 rounded mt-0.75"   ><text x="50%" y="50%" fill="#007bff" dy=".3em">1</text></strong>
 
-            <strong class="bd-placeholder-img flex-shrink-0 me-3 rounded mt-0.75"   ><text x="50%" y="50%" fill="#007bff" dy=".3em">1</text></strong>
-            <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                <div class="d-flex justify-content-between">
-                
-                <strong class="text-gray-dark" style="margin-top:7px">Full Name</strong>
-                <audio controls>
-                    <source src="http://ia802609.us.archive.org/13/items/quraninindonesia/002AlBaqarah.mp3" type="audio/mpeg">
-                </audio>
-                <div>
-                    <button class="btn btn-primary" type="button"  data-bs-toggle="modal" data-bs-target="#staticBackdrop">Read</button>
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                            </div>
+                  
+                  <!-- v-for="playlist in playlists" :key="playlist.id" -->
+                    <div class="pb-3 mb-0 small lh-sm border-bottom w-100"> 
+                        <div class="d-flex justify-content-between">
+                          <strong class="text-gray-dark" style="margin-top:7px">MyPl</strong>
+                          <audio controls>
+                            <source src="http://ia802609.us.archive.org/13/items/quraninindonesia/002AlBaqarah.mp3" type="audio/mpeg">
+                          </audio>
+                          <div>
+                              <router-link class="btn btn-primary" to="/playlist" >Open</router-link>
+                              <button class="btn btn-danger" style="margin-left:3px" @click="deletePlaylist(this.id)">Delete</button>
+                          </div>
+                        <!-- <router-link to="/" class="btn btn-primary">Buka</router-link> -->
                         </div>
+                        <!-- <span class="d-block" style="margin-top:-20px">@username</span>  -->
                     </div>
-
-                    <button class="btn btn-danger" style="margin-left:3px">Delete</button>
                 </div>
-                <!-- <router-link to="/" class="btn btn-primary">Buka</router-link> -->
-                </div>
-                <!-- <span class="d-block" style="margin-top:-20px">@username</span>  -->
-            </div>
-            </div>
+              </div>
             <small class="d-block text-end mt-3">
             </small>
         </div>

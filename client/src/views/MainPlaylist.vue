@@ -19,20 +19,31 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form @submit.prevent>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Title</label>
-                        <input type="text" class="form-control" id="recipient-name" v-model="namaPlaylist">
+                        <input type="text" class="form-control" id="recipient-name" v-model="playlist.name">
                     </div>
                     <div class="mb-3">
                         <label for="message-text" class="col-form-label">Surah</label>
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></span>
-                            <input type="text" class="form-control" placeholder="search ... " aria-label="Username" aria-describedby="basic-addon1">
+                            <input 
+                              v-model="search"
+                              type="text" 
+                              class="form-control" 
+                              placeholder="search ... " 
+                              aria-label="Username" 
+                              aria-describedby="basic-addon1"
+                              @keyup="searchSurat"
+                            >
                         </div>
                         <div class="form-check form-switch" v-for="surat in surats" :key="surat.id">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="namaSurat">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">{{surat.nama}}</label>
+                            <div>
+                              <input class="form-check-input"  type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="surat.namaSurat">
+                              <label class="form-check-label" for="flexSwitchCheckDefault">{{surat.nama}} - {{surat.nomor}}</label>
+                            </div>
+                            <hr>
                         </div>
 
                     </div>
@@ -47,22 +58,26 @@
         </div>
         <div class="my-3 p-3 bg-body rounded shadow-sm">
             <h6 class="border-bottom pb-2 mb-0 bold">All Playlist</h6>
-            <div class="d-flex text-muted pt-3">
-            <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"/><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
-            
-            <!-- v-for="playlist in playlists" :key="playlist.id" -->
-            <div class="pb-3 mb-0 small lh-sm border-bottom w-100"> 
-                <div class="d-flex justify-content-between">
-                <strong class="text-gray-dark" style="margin-top:7px">MyPl</strong>
-                <div>
-                    <router-link class="btn btn-primary" to="/playlist" >Open</router-link>
-                    <button class="btn btn-danger" style="margin-left:3px" @click="deletePlaylist(this.id)">Delete</button>
-                </div>
-                <!-- <router-link to="/" class="btn btn-primary">Buka</router-link> -->
-                </div>
-                <!-- <span class="d-block" style="margin-top:-20px">@username</span>  -->
+            <div v-for="(play,index) in playlists" :key="play.id">
+              <div class="d-flex text-muted pt-3">
+                <strong class="bd-placeholder-img flex-shrink-0 me-3 rounded mt-0.75"   ><text x="50%" y="50%" fill="#007bff" dy=".3em">{{index+1}}</text></strong>
+
+                
+                <!-- v-for="playlist in playlists" :key="playlist.id" -->
+                  <div class="pb-3 mb-0 small lh-sm border-bottom w-100"> 
+                      <div class="d-flex justify-content-between">
+                        <strong class="text-gray-dark" style="margin-top:7px">{{play.nama}}</strong>
+                        <div>
+                            <router-link class="btn btn-primary" to="/playlist" >Open</router-link>
+                            <button class="btn btn-danger" style="margin-left:3px" @click="deletePlaylist(this.id)">Delete</button>
+                        </div>
+                      <!-- <router-link to="/" class="btn btn-primary">Buka</router-link> -->
+                      </div>
+                      <!-- <span class="d-block" style="margin-top:-20px">@username</span>  -->
+                  </div>
+              </div>
             </div>
-            </div>
+
             <small class="d-block text-end mt-3">
             </small>
         </div>
@@ -71,28 +86,64 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 export default {
   data(){
     return{
-      playlists: null,
+      playlist: {
+        name:'',
+        surats:[
+
+        ]
+      },
+      playlists:{},
       surats: null,
+      bankSurats:[],
       namaPlaylist: null,
       namaSurat: null,
-      id: "li9AQ2uYf1DEQhopcc4Y"
+      id: "li9AQ2uYf1DEQhopcc4Y",
+      search:''
     }
   },
   mounted(){
-    this.readAllSurat();
+    axios.get('http://localhost:8082/read').then((res)=>{
+      this.setSurat(res.data)
+    })
+
+    axios.get('http://localhost:8082/playlist').then((res)=>{
+      this.setPlaylist(res.data)
+    })
+    // this.readAllSurat();
   },
   methods:{
-    async readAllSurat(){
-      const pl = await fetch("http://localhost:8082/read")
-      const value = await pl.json()
-      this.surats = value
+    // async readAllSurat(){
+    //   const pl = await fetch("http://localhost:8082/read")
+    //   const value = await pl.json()
+    //   this.surats = value
+    // },
+    setSurat(data){
+      this.surats = data;
     },
-    addPlaylist(){
-      
+    setPlaylist(data){
+      this.playlists = data;
+    },
+    searchSurat(){
+      axios.get("http://localhost:8082/read?="+this.search)
+        .then((res)=>this.setSurat(res.data))
+        .catch((err)=>console.log("Gagal : ", err))
+    },
+    async addPlaylist(){
+      axios.post('http://localhost:8082/create',{
+        nama:this.playlist.name,
+        surats:this.bankSurats
+      }).then(()=>{
+        this.$toast.success('Playlist Added.', {
+            type: "success",
+            position: "top-right",
+            duration: 3000,
+            dismissible: true,
+        })
+      })
     },
     async deletePlaylist(playlistId) {
       const pl = await fetch("http://localhost:8082/delete/" + playlistId, {
